@@ -1,3 +1,16 @@
+################################################################################################
+#
+# ANÁLISE DE MÍDIAS SOCIAIS E MINERAÇÃO DE TEXTO - MBA Business Analytics e Big Data
+# Por: RICARDO REIS
+#
+# CASE - PEDIDOS DE ACESSO À INFORMAÇÃO: PREFEITURA DE SP
+#
+#
+################################################################################################
+
+
+# Carrega Pacotes ---------------------------------------------------------
+
 library(plotly)
 library(dplyr)
 library(lubridate)
@@ -5,11 +18,18 @@ library(stringr)
 library(tm)
 library(tidytext)
 library(forcats)
+library(ggplot2)
 
-pedidos2018 <- read.csv("~/Desktop/Analises/pedidos-sp/pedidorespondido2018atualizado.csv", sep=";", comment.char="#", stringsAsFactors = FALSE , encoding = "utf-8")
+
+# Leitura de Dados --------------------------------------------------------
+
+pedidos2018 <- read.csv("~/Desktop/Analises/pedidos-sp/pedidorespondido2018atualizado.csv", sep=";", comment.char="#", stringsAsFactors = TRUE , encoding = "utf-8")
+
 glimpse(pedidos2018)
+head(pedidos2018)
+summary(pedidos2018)
 
-################################################################### TIDYING #########################################################################
+# Tidying  ----------------------------------------------------------------
 
 pedidos2018$orgao_nome    <- iconv(pedidos2018$orgao_nome, "latin1", "UTF-8")
 pedidos2018$status_nome   <- iconv(pedidos2018$status_nome, "latin1", "UTF-8")
@@ -21,32 +41,31 @@ pedidos2018$dt_resposta_atendimento = dmy_hm(pedidos2018$dt_resposta_atendimento
 
 pedidos2018$orgao_sigla = str_split(pedidos2018$orgao_nome, '-', simplify=TRUE)[,1]
 
-########################## Pedidos Por Orgão
-pedidos2018_unicos <- pedidos2018[unique(pedidos2018$cd_pedido),]
 
-pedidos_x_orgao <- plot_ly(
-  x = names(tail(sort(table(pedidos2018_unicos$orgao_sigla)),10)),
-  y = tail(sort(table(pedidos2018_unicos$orgao_sigla)),10),
-  name = "Pedidos",
-  type = "bar"
-  ) %>%
-  layout(title = 'Pedidos por Orgao')
+# Análise Exploratória ----------------------------------------------------
 
-########################## Pedidos 
-tramitacao <- filter(pedidos2018, pedidos2018$status_nome == "Em tramitação")
-tramitacao <- table(tramitacao$orgao_nome)
+# Contagem de pedidos únicos por órgão
+contagem_orgao <- pedidos2018 %>%
+  subset(status_nome == "Em tramitação") %>%
+  count(orgao_sigla) %>%
+  arrange(desc(n)) %>%
+  top_n(10, n) %>%
+  mutate(orgao_sigla2 = fct_reorder(orgao_sigla, n))
 
-finalizado <- filter(pedidos2018, pedidos2018$status_nome == "Finalizado")
-finalizado <- table(finalizado$orgao_nome)
-orgaos <- names(finalizado)
+# Plot de pedidos únicos por órgão
+ggplot(contagem_orgao, aes(x = orgao_sigla2, y = n)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Contagem de Palavras",
+    subtitle = "Contagem de Palavras Geral",
+    x = "Palavras",
+    y = "Contagem"
+  )
 
-data <- data.frame(orgaos, tramitacao, finalizado)
 
-p <- plot_ly(data, x = ~orgaos, y = ~tramitacao, type = 'bar', name = 'tramitacao') %>%
-  add_trace(y = ~finalizado, name = 'finalizado') %>%
-  layout(yaxis = list(title = 'Count'), barmode = 'group')
+# Text Mining -------------------------------------------------------------
 
-########################## Text Mining 
 stop_words_portuguese <- NULL
 stop_words_portuguese$word <- stopwords("portuguese")
 
@@ -97,7 +116,7 @@ contagem_orgao <- tidy_pedidos %>%
   count(word, orgao_sigla) %>%
   group_by(orgao_sigla) %>%
   arrange(desc(n)) %>%
-  top_n(50, n) %>%
+  top_n(10, n) %>%
   ungroup() %>% 
   mutate(word2 = fct_reorder(word, n))
 
@@ -113,4 +132,3 @@ ggplot(contagem_orgao, aes(x = word2, n, fill = orgao_sigla)) +
     x = "Palavras",
     y = "Contagem"
   )
-
