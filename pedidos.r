@@ -11,7 +11,6 @@
 
 # Carrega Pacotes ---------------------------------------------------------
 
-library(plotly)
 library(dplyr)
 library(lubridate)
 library(stringr)
@@ -37,7 +36,12 @@ pedidos2018$dc_pedido     <- iconv(pedidos2018$dc_pedido, "latin1", "UTF-8")
 pedidos2018$dc_resposta   <- iconv(pedidos2018$dc_resposta, "latin1", "UTF-8")
 
 pedidos2018$dt_resposta_atendimento <- str_replace_all(pedidos2018$dt_resposta_atendimento, "/", "-")
-pedidos2018$dt_resposta_atendimento = dmy_hm(pedidos2018$dt_resposta_atendimento)
+pedidos2018$dt_resposta_atendimento <- dmy_hm(pedidos2018$dt_resposta_atendimento)
+pedidos2018$data <- paste0(year(pedidos2018$dt_resposta_atendimento), "-", ifelse(nchar(month(pedidos2018$dt_resposta_atendimento)) < 2, paste0("0",month(pedidos2018$dt_resposta_atendimento)),month(pedidos2018$dt_resposta_atendimento)) , "-", ifelse(nchar(day(pedidos2018$dt_resposta_atendimento)) < 2, paste0("0",day(pedidos2018$dt_resposta_atendimento)),day(pedidos2018$dt_resposta_atendimento)))
+pedidos2018$ano <- year(pedidos2018$dt_resposta_atendimento)
+pedidos2018$mes <- month(pedidos2018$dt_resposta_atendimento)
+pedidos2018$dia <- day(pedidos2018$dt_resposta_atendimento)
+
 
 pedidos2018$orgao_sigla = str_split(pedidos2018$orgao_nome, '-', simplify=TRUE)[,1]
 
@@ -45,7 +49,7 @@ pedidos2018$orgao_sigla = str_split(pedidos2018$orgao_nome, '-', simplify=TRUE)[
 # Análise Exploratória ----------------------------------------------------
 
 # Contagem de pedidos únicos por órgão
-contagem_orgao <- pedidos2018 %>%
+contagem_pedidos_orgao <- pedidos2018 %>%
   subset(status_nome == "Em tramitação") %>%
   count(orgao_sigla) %>%
   arrange(desc(n)) %>%
@@ -53,13 +57,29 @@ contagem_orgao <- pedidos2018 %>%
   mutate(orgao_sigla2 = fct_reorder(orgao_sigla, n))
 
 # Plot de pedidos únicos por órgão
-ggplot(contagem_orgao, aes(x = orgao_sigla2, y = n)) +
+ggplot(contagem_pedidos_orgao, aes(x = orgao_sigla2, y = n)) +
   geom_col() +
   coord_flip() +
   labs(
     title = "Contagem de Palavras",
     subtitle = "Contagem de Palavras Geral",
     x = "Palavras",
+    y = "Contagem"
+  )
+
+# Contagem pedidos por dia
+contagem_pedidos_dia <-  pedidos2018 %>%
+  subset(status_nome == "Em tramitação" & mes == 1 & ano == 2018) %>%
+  group_by(data) %>%
+  count(data)
+
+# Plot de tweets por dia
+ggplot(contagem_pedidos_dia, aes(x = data, y = n, group = 1)) +
+  geom_line() +
+  labs(
+    title = "Contagem de Tweets",
+    subtitle = "Contagem de Tweets por Dia",
+    x = "Dias",
     y = "Contagem"
   )
 
