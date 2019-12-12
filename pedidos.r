@@ -42,7 +42,6 @@ pedidos2018$ano <- year(pedidos2018$dt_resposta_atendimento)
 pedidos2018$mes <- month(pedidos2018$dt_resposta_atendimento)
 pedidos2018$dia <- day(pedidos2018$dt_resposta_atendimento)
 
-
 pedidos2018$orgao_sigla = str_split(pedidos2018$orgao_nome, '-', simplify=TRUE)[,1]
 
 
@@ -61,10 +60,10 @@ ggplot(contagem_pedidos_orgao, aes(x = orgao_sigla2, y = n)) +
   geom_col() +
   coord_flip() +
   labs(
-    title = "Contagem de Palavras",
-    subtitle = "Contagem de Palavras Geral",
-    x = "Palavras",
-    y = "Contagem"
+    title = "Pedidos por Órgão",
+    subtitle = "Pedidos por Órgão",
+    x = "Pedidos",
+    y = "Órgão"
   )
 
 # Contagem pedidos por dia
@@ -73,14 +72,14 @@ contagem_pedidos_dia <-  pedidos2018 %>%
   group_by(data) %>%
   count(data)
 
-# Plot de tweets por dia
+# Plot de pedidos por dia
 ggplot(contagem_pedidos_dia, aes(x = data, y = n, group = 1)) +
   geom_line() +
   labs(
-    title = "Contagem de Tweets",
-    subtitle = "Contagem de Tweets por Dia",
+    title = "Pedidos por Dia",
+    subtitle = "Pedidos por Dia em Janeiro de 2018",
     x = "Dias",
-    y = "Contagem"
+    y = "Pedidos"
   )
 
 
