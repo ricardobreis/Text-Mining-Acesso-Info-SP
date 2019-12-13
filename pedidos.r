@@ -22,7 +22,7 @@ library(ggplot2)
 
 # Leitura de Dados --------------------------------------------------------
 
-pedidos2018 <- read.csv("~/Desktop/Analises/pedidos-sp/pedidorespondido2018atualizado.csv", sep=";", comment.char="#", stringsAsFactors = TRUE , encoding = "utf-8")
+pedidos2018 <- read.csv("C:/Users/Ricardo/Documents/R-Projetos/AcessoInfoSP/pedidorespondido2018atualizado.csv", sep=";", comment.char="#", stringsAsFactors = TRUE , encoding = "utf-8")
 
 glimpse(pedidos2018)
 head(pedidos2018)
@@ -47,32 +47,50 @@ pedidos2018$orgao_sigla = str_split(pedidos2018$orgao_nome, '-', simplify=TRUE)[
 
 # Análise Exploratória ----------------------------------------------------
 
-# Contagem de pedidos únicos por órgão
+# Contagem de pedidos únicos por órgão iniciados e finalizados
 contagem_pedidos_orgao <- pedidos2018 %>%
-  subset(status_nome == "Em tramitação") %>%
-  count(orgao_sigla) %>%
+  subset(status_nome == "Em tramitação" | status_nome == "Finalizado") %>%
+  count(orgao_sigla, status_nome) %>%
+  group_by(status_nome) %>%
   arrange(desc(n)) %>%
   top_n(10, n) %>%
   mutate(orgao_sigla2 = fct_reorder(orgao_sigla, n))
 
-# Plot de pedidos únicos por órgão
-ggplot(contagem_pedidos_orgao, aes(x = orgao_sigla2, y = n)) +
+# Plot de pedidos únicos por órgão iniciados e finalizados
+ggplot(contagem_pedidos_orgao, aes(x = orgao_sigla2, y = n, fill = status_nome)) +
   geom_col() +
+  facet_wrap(~ status_nome, scales = "free_y") +
   coord_flip() +
   labs(
     title = "Pedidos por Órgão",
-    subtitle = "Pedidos por Órgão",
-    x = "Pedidos",
-    y = "Órgão"
+    subtitle = "TOP 10 - Pedidos por Órgão",
+    x = "Órgãos",
+    y = "Pedidos"
   )
 
-# Contagem pedidos por dia
-contagem_pedidos_dia <-  pedidos2018 %>%
-  subset(status_nome == "Em tramitação" & mes == 1 & ano == 2018) %>%
+# Contagem pedidos por mês em 2018
+contagem_pedidos_mes <- pedidos2018 %>%
+  subset(status_nome == "Em tramitação" & ano == 2018) %>%
+  group_by(mes) %>%
+  count() 
+
+# Plot de pedidos por mês em 2018
+ggplot(contagem_pedidos_mes, aes(x = mes, y = n, group = 1)) +
+  geom_line() +
+  labs(
+    title = "Pedidos por Dia",
+    subtitle = "Pedidos por Dia em Janeiro de 2018",
+    x = "Dias",
+    y = "Pedidos"
+  )
+
+# Contagem pedidos por dia em Maio de 2018
+contagem_pedidos_dia <- pedidos2018 %>%
+  subset(status_nome == "Em tramitação" & mes == 5 & ano == 2018) %>%
   group_by(data) %>%
   count(data)
 
-# Plot de pedidos por dia
+# Plot de pedidos por dia em Maio de 2018
 ggplot(contagem_pedidos_dia, aes(x = data, y = n, group = 1)) +
   geom_line() +
   labs(
@@ -151,3 +169,4 @@ ggplot(contagem_orgao, aes(x = word2, n, fill = orgao_sigla)) +
     x = "Palavras",
     y = "Contagem"
   )
+
