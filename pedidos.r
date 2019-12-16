@@ -118,7 +118,9 @@ custom_stop_words_portuguese <- tribble(
   "solicito", 
   "prefeitura", 
   "gostaria", 
-  "informações"
+  "informações",
+  "paulo",
+  "sp"
 )
 
 stop_words_portuguese2 <- stop_words_portuguese %>% 
@@ -157,7 +159,6 @@ contagem_orgao <- tidy_pedidos %>%
   ungroup() %>% 
   mutate(word2 = fct_reorder(word, n))
 
-
 # Plotar contagem de palavras
 ggplot(contagem_orgao, aes(x = word2, n, fill = orgao_sigla)) +
   geom_col() +
@@ -170,3 +171,47 @@ ggplot(contagem_orgao, aes(x = word2, n, fill = orgao_sigla)) +
     y = "Contagem"
   )
 
+# Bigrams
+tidy_pedidos_bigrams <- pedidos2018 %>%
+  unnest_tokens(bigram, dc_pedido, token = "ngrams", n=2)
+
+# Contagem de bigrams
+tidy_pedidos_bigrams %>% count(bigram, sort = TRUE)
+
+# Separando os bigrams em colunas
+bigrams_separated <- tidy_pedidos_bigrams %>% separate(bigram, sep = " ", c("word1","word2"))
+
+# Eliminando rows que contenham stop words em pelo menos uma das palavras
+bigrams_filtered <- bigrams_separated %>% filter(!word1 %in% stop_words_portuguese2$word) %>% 
+                      filter(!word2 %in% stop_words_portuguese2$word)
+
+# Contagem de bigrams
+bigrams_filtered %>% count(word1, word2, sort=TRUE)
+
+# Junção de bigrams em uma coluna
+bigrams_united <- bigrams_filtered %>% unite(bigram, word1, word2, sep=" ")
+
+# Contagem de bigrams
+bigrams_united %>% count(bigram, sort = TRUE)
+
+# Contar palavras por órgão
+contagem_bigrams_united <- bigrams_united %>%
+  filter(cd_orgao %in% c(67, 16, 10)) %>%
+  group_by(orgao_sigla) %>%
+  count(bigram, sort = TRUE) %>%
+  arrange(desc(n)) %>%
+  top_n(10, n) %>%
+  ungroup() %>% 
+  mutate(bigram2 = fct_reorder(bigram, n))
+
+# Plotar contagem de palavras
+ggplot(contagem_bigrams_united, aes(x = bigram2, n, fill = orgao_sigla)) +
+  geom_col() +
+  facet_wrap(~ orgao_sigla, scales = "free_y") +
+  coord_flip() +
+  labs(
+    title = "Contagem de Palavras",
+    subtitle = "Contagem de Palavras Geral",
+    x = "Palavras",
+    y = "Contagem"
+  )
