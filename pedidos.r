@@ -120,7 +120,8 @@ custom_stop_words_portuguese <- tribble(
   "gostaria", 
   "informações",
   "paulo",
-  "sp"
+  "sp",
+  NA
 )
 
 stop_words_portuguese2 <- stop_words_portuguese %>% 
