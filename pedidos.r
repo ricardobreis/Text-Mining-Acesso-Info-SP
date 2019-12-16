@@ -95,7 +95,7 @@ ggplot(contagem_pedidos_dia, aes(x = data, y = n, group = 1)) +
   geom_line() +
   labs(
     title = "Pedidos por Dia",
-    subtitle = "Pedidos por Dia em Janeiro de 2018",
+    subtitle = "Pedidos por Dia em Maio de 2018",
     x = "Dias",
     y = "Pedidos"
   )
@@ -122,12 +122,12 @@ custom_stop_words_portuguese <- tribble(
 )
 
 stop_words_portuguese2 <- stop_words_portuguese %>% 
-  rbind(custom_stop_words)
+  rbind(custom_stop_words_portuguese)
 
 # Tokenizar e remover stop words
 tidy_pedidos <- pedidos2018 %>%
   unnest_tokens(word, dc_pedido) %>%
-  anti_join(as.data.frame(stop_words2), by = c("word" = "word"))
+  anti_join(as.data.frame(stop_words_portuguese2), by = c("word" = "word"))
 
 # Contar palavras
 contagem <- tidy_pedidos %>%
