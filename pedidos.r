@@ -216,3 +216,41 @@ ggplot(contagem_bigrams_united, aes(x = bigram2, n, fill = orgao_sigla)) +
     x = "Palavras",
     y = "Contagem"
   )
+
+# Trigrams
+
+tidy_pedidos_trigrams <- pedidos2018 %>%
+  unnest_tokens(trigram, dc_pedido, token = "ngrams", n=3) 
+
+trigrams_separated <- tidy_pedidos_trigrams %>% separate(trigram, c("word1", "word2", "word3"), sep = " ")
+
+trigrams_filtered <- trigrams_separated %>% 
+  filter(!word1 %in% stop_words_portuguese2$word) %>% filter(!word2 %in% stop_words_portuguese2$word) %>%
+  filter(!word3 %in% stop_words_portuguese2$word) 
+
+trigrams_united <- trigrams_filtered %>% unite(trigram, word1, word2, word3, sep=" ")
+
+trigrams_united %>% count(trigram, sort = TRUE)
+
+# Contar palavras por órgão
+contagem_trigrams_united <- trigrams_united %>%
+  filter(cd_orgao %in% c(67, 16, 10)) %>%
+  group_by(orgao_sigla) %>%
+  count(trigram, sort = TRUE) %>%
+  arrange(desc(n)) %>%
+  top_n(10, n) %>%
+  ungroup() %>% 
+  mutate(trigram2 = fct_reorder(trigram, n))
+
+# Plotar contagem de palavras
+ggplot(contagem_trigrams_united, aes(x = trigram2, n, fill = orgao_sigla)) +
+  geom_col() +
+  facet_wrap(~ orgao_sigla, scales = "free_y") +
+  coord_flip() +
+  labs(
+    title = "Contagem de Palavras",
+    subtitle = "Contagem de Palavras Geral",
+    x = "Palavras",
+    y = "Contagem"
+  )
+
