@@ -217,6 +217,16 @@ ggplot(contagem_bigrams_united, aes(x = bigram2, n, fill = orgao_sigla)) +
     y = "Contagem"
   )
 
+# TF-IDF bigrams
+bigram_tf_idf <- bigrams_united %>% filter(cd_orgao %in% c(67, 16, 10)) %>% count(orgao_sigla, bigram) %>% bind_tf_idf(bigram, orgao_sigla, n) %>%
+  arrange(desc(tf_idf))
+
+bigram_tf_idf %>% group_by(orgao_sigla) %>% top_n(12,tf_idf) %>% ungroup() %>%
+  mutate(bigram=reorder(bigram,tf_idf)) %>% 
+  ggplot(aes(x=bigram, y=tf_idf)) + geom_col(show.legend=FALSE) + 
+    facet_wrap(~orgao_sigla, scales="free_y", ncol=3) + coord_flip() + 
+    labs(y="tf-idf bigram to novel", x=NULL)
+
 # Trigrams
 
 tidy_pedidos_trigrams <- pedidos2018 %>%
@@ -254,3 +264,12 @@ ggplot(contagem_trigrams_united, aes(x = trigram2, n, fill = orgao_sigla)) +
     y = "Contagem"
   )
 
+# TF-IDF bigrams
+trigram_tf_idf <- trigrams_united %>% filter(cd_orgao %in% c(67, 16, 10)) %>% count(orgao_sigla, trigram) %>% bind_tf_idf(trigram, orgao_sigla, n) %>%
+  arrange(desc(tf_idf))
+
+trigram_tf_idf %>% group_by(orgao_sigla) %>% top_n(12,tf_idf) %>% ungroup() %>%
+  mutate(trigram=reorder(trigram,tf_idf)) %>% 
+  ggplot(aes(x=trigram, y=tf_idf)) + geom_col(show.legend=FALSE) + 
+    facet_wrap(~orgao_sigla, scales="free_y", ncol=3) + coord_flip() + 
+    labs(y="tf-idf trigram to novel", x=NULL)
