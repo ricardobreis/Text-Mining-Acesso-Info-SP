@@ -162,7 +162,7 @@ contagem_orgao <- tidy_pedidos %>%
 
 # Plotar contagem de palavras
 ggplot(contagem_orgao, aes(x = word2, n, fill = orgao_sigla)) +
-  geom_col() +
+  geom_col(show.legend=FALSE) +
   facet_wrap(~ orgao_sigla, scales = "free_y") +
   coord_flip() +
   labs(
@@ -172,30 +172,38 @@ ggplot(contagem_orgao, aes(x = word2, n, fill = orgao_sigla)) +
     y = "Contagem"
   )
 
-# Bigrams
+
+# Text Mining - Análise de Bigramas ---------------------------------------
+
 tidy_pedidos_bigrams <- pedidos2018 %>%
   unnest_tokens(bigram, dc_pedido, token = "ngrams", n=2)
 
 # Contagem de bigrams
-tidy_pedidos_bigrams %>% count(bigram, sort = TRUE)
+tidy_pedidos_bigrams %>%
+  count(bigram, sort = TRUE)
 
 # Separando os bigrams em colunas
-bigrams_separated <- tidy_pedidos_bigrams %>% separate(bigram, sep = " ", c("word1","word2"))
+bigrams_separated <- tidy_pedidos_bigrams %>%
+  separate(bigram, sep = " ", c("word1","word2"))
 
 # Eliminando rows que contenham stop words em pelo menos uma das palavras
-bigrams_filtered <- bigrams_separated %>% filter(!word1 %in% stop_words_portuguese2$word) %>% 
-                      filter(!word2 %in% stop_words_portuguese2$word)
+bigrams_filtered <- bigrams_separated %>%
+  filter(!word1 %in% stop_words_portuguese2$word) %>%
+  filter(!word2 %in% stop_words_portuguese2$word)
 
 # Contagem de bigrams
-bigrams_filtered %>% count(word1, word2, sort=TRUE)
+bigrams_filtered %>%
+  count(word1, word2, sort=TRUE)
 
 # Junção de bigrams em uma coluna
-bigrams_united <- bigrams_filtered %>% unite(bigram, word1, word2, sep=" ")
+bigrams_united <- bigrams_filtered %>%
+  unite(bigram, word1, word2, sep=" ")
 
 # Contagem de bigrams
-bigrams_united %>% count(bigram, sort = TRUE)
+bigrams_united %>%
+  count(bigram, sort = TRUE)
 
-# Contar palavras por órgão
+# Contar bigramas por órgão
 contagem_bigrams_united <- bigrams_united %>%
   filter(cd_orgao %in% c(67, 16, 10)) %>%
   group_by(orgao_sigla) %>%
@@ -205,44 +213,64 @@ contagem_bigrams_united <- bigrams_united %>%
   ungroup() %>% 
   mutate(bigram2 = fct_reorder(bigram, n))
 
-# Plotar contagem de palavras
+# Plotar contagem de bigramas
 ggplot(contagem_bigrams_united, aes(x = bigram2, n, fill = orgao_sigla)) +
-  geom_col() +
+  geom_col(show.legend=FALSE) +
   facet_wrap(~ orgao_sigla, scales = "free_y") +
   coord_flip() +
   labs(
-    title = "Contagem de Palavras",
-    subtitle = "Contagem de Palavras Geral",
-    x = "Palavras",
-    y = "Contagem"
+    title = "Contagem de Bigramas",
+    subtitle = "Contagem de Bigramas na SME, SMS e SPTrans",
+    x = "Contagem",
+    y = "Bigramas"
   )
 
-# TF-IDF bigrams
-bigram_tf_idf <- bigrams_united %>% filter(cd_orgao %in% c(67, 16, 10)) %>% count(orgao_sigla, bigram) %>% bind_tf_idf(bigram, orgao_sigla, n) %>%
+
+# Text Mining - Análise TF-IDF de Bigramas --------------------------------
+
+bigram_tf_idf <- tidy_pedidos_bigrams %>%
+  filter(cd_orgao %in% c(67, 16, 10)) %>%
+  count(orgao_sigla, bigram) %>%
+  bind_tf_idf(bigram, orgao_sigla, n) %>%
   arrange(desc(tf_idf))
 
-bigram_tf_idf %>% group_by(orgao_sigla) %>% top_n(12,tf_idf) %>% ungroup() %>%
+bigram_tf_idf %>%
+  group_by(orgao_sigla) %>%
+  top_n(12,tf_idf) %>%
+  ungroup() %>%
   mutate(bigram=reorder(bigram,tf_idf)) %>% 
-  ggplot(aes(x=bigram, y=tf_idf)) + geom_col(show.legend=FALSE) + 
-    facet_wrap(~orgao_sigla, scales="free_y", ncol=3) + coord_flip() + 
-    labs(y="tf-idf bigram to novel", x=NULL)
+  ggplot(aes(x=bigram, y=tf_idf, fill = orgao_sigla)) +
+    geom_col(show.legend=FALSE) + 
+    facet_wrap(~orgao_sigla, scales="free_y", ncol=3) +
+    coord_flip() + 
+    labs(
+      title = "Análise TF-IDF",
+      subtitle = "Análise TF-IDF na SME, SMS e SPTrans",
+      x = "TF-IDF",
+      y = "Bigramas"
+    )
 
-# Trigrams
+
+# Text Mining - Análise de Trigramas --------------------------------------
 
 tidy_pedidos_trigrams <- pedidos2018 %>%
   unnest_tokens(trigram, dc_pedido, token = "ngrams", n=3) 
 
-trigrams_separated <- tidy_pedidos_trigrams %>% separate(trigram, c("word1", "word2", "word3"), sep = " ")
+trigrams_separated <- tidy_pedidos_trigrams %>%
+  separate(trigram, c("word1", "word2", "word3"), sep = " ")
 
 trigrams_filtered <- trigrams_separated %>% 
-  filter(!word1 %in% stop_words_portuguese2$word) %>% filter(!word2 %in% stop_words_portuguese2$word) %>%
+  filter(!word1 %in% stop_words_portuguese2$word) %>%
+  filter(!word2 %in% stop_words_portuguese2$word) %>%
   filter(!word3 %in% stop_words_portuguese2$word) 
 
-trigrams_united <- trigrams_filtered %>% unite(trigram, word1, word2, word3, sep=" ")
+trigrams_united <- trigrams_filtered %>%
+  unite(trigram, word1, word2, word3, sep=" ")
 
-trigrams_united %>% count(trigram, sort = TRUE)
+trigrams_united %>%
+  count(trigram, sort = TRUE)
 
-# Contar palavras por órgão
+# Contar trigramas por órgão
 contagem_trigrams_united <- trigrams_united %>%
   filter(cd_orgao %in% c(67, 16, 10)) %>%
   group_by(orgao_sigla) %>%
@@ -252,24 +280,40 @@ contagem_trigrams_united <- trigrams_united %>%
   ungroup() %>% 
   mutate(trigram2 = fct_reorder(trigram, n))
 
-# Plotar contagem de palavras
+# Plotar contagem de trigramas
 ggplot(contagem_trigrams_united, aes(x = trigram2, n, fill = orgao_sigla)) +
-  geom_col() +
+  geom_col(show.legend=FALSE) +
   facet_wrap(~ orgao_sigla, scales = "free_y") +
   coord_flip() +
   labs(
-    title = "Contagem de Palavras",
-    subtitle = "Contagem de Palavras Geral",
-    x = "Palavras",
+    title = "Contagem de Trigramas",
+    subtitle = "Contagem de Trigramas na SME, SMS e SPTrans",
+    x = "Trigramas",
     y = "Contagem"
   )
 
-# TF-IDF bigrams
-trigram_tf_idf <- trigrams_united %>% filter(cd_orgao %in% c(67, 16, 10)) %>% count(orgao_sigla, trigram) %>% bind_tf_idf(trigram, orgao_sigla, n) %>%
+
+# Text Mining - Análise TF-IDF de Trigramas -------------------------------
+
+trigram_tf_idf <- tidy_pedidos_trigrams %>%
+  filter(cd_orgao %in% c(67, 16, 10)) %>%
+  count(orgao_sigla, trigram) %>% 
+  bind_tf_idf(trigram, orgao_sigla, n) %>%
   arrange(desc(tf_idf))
 
-trigram_tf_idf %>% group_by(orgao_sigla) %>% top_n(12,tf_idf) %>% ungroup() %>%
+trigram_tf_idf %>%
+  group_by(orgao_sigla) %>%
+  top_n(12,tf_idf) %>%
+  ungroup() %>%
   mutate(trigram=reorder(trigram,tf_idf)) %>% 
-  ggplot(aes(x=trigram, y=tf_idf)) + geom_col(show.legend=FALSE) + 
-    facet_wrap(~orgao_sigla, scales="free_y", ncol=3) + coord_flip() + 
-    labs(y="tf-idf trigram to novel", x=NULL)
+  ggplot(aes(x=trigram, y=tf_idf, fill = orgao_sigla)) +
+    geom_col(show.legend=FALSE) + 
+    facet_wrap(~orgao_sigla, scales="free_y", ncol=3) +
+    coord_flip() + 
+    labs(
+      title = "Análise TF-IDF",
+      subtitle = "Análise TF-IDF por Órgão",
+      x = "TF-IDF",
+      y = "Trigramas"
+    )
+
