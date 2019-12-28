@@ -331,6 +331,7 @@ mod <- LDA(x=dtm, k=3, method="Gibbs",control=list(alpha=1, delta=0.1, seed=1000
 
 topicos <- tidy(mod, matrix = "beta")
 
+# Palavras Mais Comuns por Tópico
 topicos_top_terms <- topicos %>%
   group_by(topic) %>%
   top_n(10, beta) %>%
@@ -342,4 +343,39 @@ topicos_top_terms %>%
   ggplot(aes(term, beta, fill = factor(topic))) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~ topic, scales = "free") +
+  coord_flip() + 
+  labs(
+    title = "Topic Modelling",
+    subtitle = "Palavras Mais Comuns por Tópico",
+    x = "Palavras",
+    y = "Beta"
+  )
+
+# Termos com a maior diferença entre os βs
+dtm2 <- tidy_pedidos %>% 
+  filter(cd_orgao %in% c(67, 16)) %>% # Educação e Transporte
+  count(cd_pedido, word) %>% 
+  cast_dtm(document=cd_pedido, term=word, value=n)
+
+mod2 <- LDA(x=dtm2, k=2, method="Gibbs",control=list(alpha=1, delta=0.1, seed=10005))
+
+topicos2 <- tidy(mod2, matrix = "beta")
+
+beta_spread <- topicos2 %>%
+  mutate(topic = paste0("topic", topic)) %>% spread(topic, beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>% mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(
+    title = "Topic Modelling",
+    subtitle = "Termos com a maior diferença entre os βs",
+    x = "Palavras",
+    y = "Log2 ratio of beta in topic 2 / topic 1"
+  ) +
   coord_flip()
