@@ -18,6 +18,8 @@ library(tm)
 library(tidytext)
 library(forcats)
 library(ggplot2)
+library(tidyr)
+library(topicmodels)
 
 
 # Leitura de Dados --------------------------------------------------------
@@ -240,15 +242,15 @@ bigram_tf_idf %>%
   ungroup() %>%
   mutate(bigram=reorder(bigram,tf_idf)) %>% 
   ggplot(aes(x=bigram, y=tf_idf, fill = orgao_sigla)) +
-    geom_col(show.legend=FALSE) + 
-    facet_wrap(~orgao_sigla, scales="free_y", ncol=3) +
-    coord_flip() + 
-    labs(
-      title = "Análise TF-IDF",
-      subtitle = "Análise TF-IDF na SME, SMS e SPTrans",
-      x = "TF-IDF",
-      y = "Bigramas"
-    )
+  geom_col(show.legend=FALSE) + 
+  facet_wrap(~orgao_sigla, scales="free_y", ncol=3) +
+  coord_flip() + 
+  labs(
+    title = "Análise TF-IDF",
+    subtitle = "Análise TF-IDF na SME, SMS e SPTrans",
+    x = "TF-IDF",
+    y = "Bigramas"
+  )
 
 
 # Text Mining - Análise de Trigramas --------------------------------------
@@ -307,13 +309,37 @@ trigram_tf_idf %>%
   ungroup() %>%
   mutate(trigram=reorder(trigram,tf_idf)) %>% 
   ggplot(aes(x=trigram, y=tf_idf, fill = orgao_sigla)) +
-    geom_col(show.legend=FALSE) + 
-    facet_wrap(~orgao_sigla, scales="free_y", ncol=3) +
-    coord_flip() + 
-    labs(
-      title = "Análise TF-IDF",
-      subtitle = "Análise TF-IDF por Órgão",
-      x = "TF-IDF",
-      y = "Trigramas"
-    )
+  geom_col(show.legend=FALSE) + 
+  facet_wrap(~orgao_sigla, scales="free_y", ncol=3) +
+  coord_flip() + 
+  labs(
+    title = "Análise TF-IDF",
+    subtitle = "Análise TF-IDF por Órgão",
+    x = "TF-IDF",
+    y = "Trigramas"
+  )
 
+
+# Topic Modelling ---------------------------------------------------------
+
+dtm <- tidy_pedidos %>% 
+  filter(cd_orgao %in% c(67, 16, 10)) %>%
+  count(cd_pedido, word) %>% 
+  cast_dtm(document=cd_pedido, term=word, value=n)
+
+mod <- LDA(x=dtm, k=3, method="Gibbs",control=list(alpha=1, delta=0.1, seed=10005))
+
+topicos <- tidy(mod, matrix = "beta")
+
+topicos_top_terms <- topicos %>%
+  group_by(topic) %>%
+  top_n(10, beta) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+topicos_top_terms %>%
+  mutate(term = reorder(term, beta)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip()
