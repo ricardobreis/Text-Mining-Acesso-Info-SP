@@ -37,10 +37,15 @@ summary(pedidos2018)
 
 # Tidying  ----------------------------------------------------------------
 
-pedidos2018$orgao_nome    <- iconv(pedidos2018$orgao_nome, "latin1", "UTF-8")
-pedidos2018$status_nome   <- iconv(pedidos2018$status_nome, "latin1", "UTF-8")
-pedidos2018$dc_pedido     <- iconv(pedidos2018$dc_pedido, "latin1", "UTF-8")
-pedidos2018$dc_resposta   <- iconv(pedidos2018$dc_resposta, "latin1", "UTF-8")
+# pedidos2018$orgao_nome    <- iconv(pedidos2018$orgao_nome, "latin1", "UTF-8")
+# pedidos2018$status_nome   <- iconv(pedidos2018$status_nome, "latin1", "UTF-8")
+# pedidos2018$dc_pedido     <- iconv(pedidos2018$dc_pedido, "latin1", "UTF-8")
+# pedidos2018$dc_resposta   <- iconv(pedidos2018$dc_resposta, "latin1", "UTF-8")
+
+pedidos2018$orgao_nome    <- as.character(pedidos2018$orgao_nome)
+pedidos2018$status_nome   <- as.character(pedidos2018$status_nome)
+pedidos2018$dc_pedido     <- as.character(pedidos2018$dc_pedido)
+pedidos2018$dc_resposta   <- as.character(pedidos2018$dc_resposta)
 
 pedidos2018$dt_resposta_atendimento <- str_replace_all(pedidos2018$dt_resposta_atendimento, "/", "-")
 pedidos2018$dt_resposta_atendimento <- dmy_hm(pedidos2018$dt_resposta_atendimento)
@@ -87,6 +92,22 @@ ggplot(contagem_pedidos_mes, aes(x = as.factor(mes), y = n, group = 1)) +
   labs(
     title = "Pedidos por Mês",
     subtitle = "Pedidos por Mês em 2018",
+    x = "Meses",
+    y = "Pedidos"
+  )
+
+# Contagem pedidos por mês em 2018 da SME, SMS e SPTrans
+contagem_pedidos_mes_orgao <- pedidos2018 %>%
+  subset(status_nome == "Em tramitação" & ano == 2018 & cd_orgao %in% c(67, 16, 10)) %>%
+  group_by(orgao_sigla, mes) %>%
+  count() 
+
+# Plot de pedidos por mês em 2018 da SME, SMS e SPTrans
+ggplot(contagem_pedidos_mes_orgao, aes(x = mes, y = n, col = orgao_sigla)) +
+  geom_line() +
+  labs(
+    title = "Pedidos por Mês",
+    subtitle = "Pedidos por Mês em 2018: Educação, Saúde e Transporte",
     x = "Meses",
     y = "Pedidos"
   )
