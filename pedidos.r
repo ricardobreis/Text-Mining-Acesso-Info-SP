@@ -21,6 +21,11 @@ library(ggplot2)
 library(tidyr)
 library(topicmodels)
 
+# Limpando o console.
+cat("\014") 
+# Limpando o Global Environment.
+rm(list = ls())
+
 
 # Leitura de Dados --------------------------------------------------------
 
@@ -65,7 +70,7 @@ ggplot(contagem_pedidos_orgao, aes(x = orgao_sigla2, y = n, fill = status_nome))
   coord_flip() +
   labs(
     title = "Pedidos por Órgão",
-    subtitle = "TOP 10 - Pedidos por Órgão",
+    subtitle = "TOP 10 - Pedidos por Órgão Iniciados e Finalizados",
     x = "Órgãos",
     y = "Pedidos"
   )
@@ -77,12 +82,12 @@ contagem_pedidos_mes <- pedidos2018 %>%
   count() 
 
 # Plot de pedidos por mês em 2018
-ggplot(contagem_pedidos_mes, aes(x = mes, y = n, group = 1)) +
+ggplot(contagem_pedidos_mes, aes(x = as.factor(mes), y = n, group = 1)) +
   geom_line() +
   labs(
-    title = "Pedidos por Dia",
-    subtitle = "Pedidos por Dia em Janeiro de 2018",
-    x = "Dias",
+    title = "Pedidos por Mês",
+    subtitle = "Pedidos por Mês em 2018",
+    x = "Meses",
     y = "Pedidos"
   )
 
@@ -100,7 +105,8 @@ ggplot(contagem_pedidos_dia, aes(x = data, y = n, group = 1)) +
     subtitle = "Pedidos por Dia em Maio de 2018",
     x = "Dias",
     y = "Pedidos"
-  )
+  ) +
+  theme(axis.text.x = element_text(angle=90))
 
 
 # Text Mining -------------------------------------------------------------
@@ -138,7 +144,7 @@ tidy_pedidos <- pedidos2018 %>%
 contagem <- tidy_pedidos %>%
   count(word) %>%
   arrange(desc(n)) %>%
-  top_n(50, n) %>%
+  top_n(30, n) %>%
   mutate(word2 = fct_reorder(word, n))
 
 # Plotar contagem de palavras
@@ -147,7 +153,7 @@ ggplot(contagem, aes(x = word2, n)) +
   coord_flip() +
   labs(
     title = "Contagem de Palavras",
-    subtitle = "Contagem de Palavras Geral",
+    subtitle = "TOP 30 - Contagem de Palavras Geral",
     x = "Palavras",
     y = "Contagem"
   )
@@ -169,7 +175,7 @@ ggplot(contagem_orgao, aes(x = word2, n, fill = orgao_sigla)) +
   coord_flip() +
   labs(
     title = "Contagem de Palavras",
-    subtitle = "Contagem de Palavras Geral",
+    subtitle = "TOP 10 - Contagem de Palavras: Educação, Saúde e Transporte",
     x = "Palavras",
     y = "Contagem"
   )
@@ -222,7 +228,7 @@ ggplot(contagem_bigrams_united, aes(x = bigram2, n, fill = orgao_sigla)) +
   coord_flip() +
   labs(
     title = "Contagem de Bigramas",
-    subtitle = "Contagem de Bigramas na SME, SMS e SPTrans",
+    subtitle = "TOP 10 - Contagem de Bigramas: Educação, Saúde e Transporte",
     x = "Contagem",
     y = "Bigramas"
   )
@@ -238,7 +244,7 @@ bigram_tf_idf <- tidy_pedidos_bigrams %>%
 
 bigram_tf_idf %>%
   group_by(orgao_sigla) %>%
-  top_n(12,tf_idf) %>%
+  top_n(15,tf_idf) %>%
   ungroup() %>%
   mutate(bigram=reorder(bigram,tf_idf)) %>% 
   ggplot(aes(x=bigram, y=tf_idf, fill = orgao_sigla)) +
@@ -247,7 +253,7 @@ bigram_tf_idf %>%
   coord_flip() + 
   labs(
     title = "Análise TF-IDF",
-    subtitle = "Análise TF-IDF na SME, SMS e SPTrans",
+    subtitle = "Análise TF-IDF: Educação, Saúde e Transporte",
     x = "TF-IDF",
     y = "Bigramas"
   )
@@ -289,7 +295,7 @@ ggplot(contagem_trigrams_united, aes(x = trigram2, n, fill = orgao_sigla)) +
   coord_flip() +
   labs(
     title = "Contagem de Trigramas",
-    subtitle = "Contagem de Trigramas na SME, SMS e SPTrans",
+    subtitle = "Contagem de Trigramas: Educação, Saúde e Transporte",
     x = "Trigramas",
     y = "Contagem"
   )
@@ -314,7 +320,7 @@ trigram_tf_idf %>%
   coord_flip() + 
   labs(
     title = "Análise TF-IDF",
-    subtitle = "Análise TF-IDF por Órgão",
+    subtitle = "Análise TF-IDF: Educação, Saúde e Transporte",
     x = "TF-IDF",
     y = "Trigramas"
   )
@@ -379,3 +385,4 @@ beta_spread %>%
     y = "Log2 ratio of beta in topic 2 / topic 1"
   ) +
   coord_flip()
+
