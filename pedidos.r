@@ -20,6 +20,7 @@ library(forcats)
 library(ggplot2)
 library(tidyr)
 library(topicmodels)
+library(wordcloud)
 
 # Limpando o console.
 cat("\014") 
@@ -178,6 +179,16 @@ ggplot(contagem, aes(x = word2, n)) +
     x = "Palavras",
     y = "Contagem"
   )
+
+# Criando nuvem de palavras
+wordcloud(
+  word = contagem$word, 
+  freq = contagem$n,
+  max.words = 30,
+  rot.per=0.35, 
+  min.freq = 1,
+  random.order=FALSE
+)
 
 # Contar palavras por órgão
 contagem_orgao <- tidy_pedidos %>%
@@ -378,7 +389,7 @@ topicos_top_terms %>%
     y = "Beta"
   )
 
-# Termos com a maior diferença entre os βs
+# Termos com a maior diferença entre os ??s
 dtm2 <- tidy_pedidos %>% 
   filter(cd_orgao %in% c(67, 16)) %>% # Educação e Transporte
   count(cd_pedido, word) %>% 
@@ -389,8 +400,10 @@ mod2 <- LDA(x=dtm2, k=2, method="Gibbs",control=list(alpha=1, delta=0.1, seed=10
 topicos2 <- tidy(mod2, matrix = "beta")
 
 beta_spread <- topicos2 %>%
-  mutate(topic = paste0("topic", topic)) %>% spread(topic, beta) %>%
-  filter(topic1 > .001 | topic2 > .001) %>% mutate(log_ratio = log2(topic2 / topic1))
+  mutate(topic = paste0("topic", topic)) %>%
+  spread(topic, beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
 
 beta_spread %>%
   group_by(direction = log_ratio > 0) %>%
@@ -401,7 +414,7 @@ beta_spread %>%
   geom_col() +
   labs(
     title = "Topic Modelling",
-    subtitle = "Termos com a maior diferença entre os βs",
+    subtitle = "Termos com a maior diferença entre os ??s",
     x = "Palavras",
     y = "Log2 ratio of beta in topic 2 / topic 1"
   ) +
