@@ -420,3 +420,103 @@ beta_spread %>%
   ) +
   coord_flip()
 
+# SPTrans
+
+dtm_sptrans <- tidy_pedidos %>% 
+  filter(cd_orgao %in% c(67)) %>%
+  count(cd_pedido, word) %>% 
+  cast_dtm(document=cd_pedido, term=word, value=n)
+
+mod_sptrans <- LDA(x=dtm_sptrans, k=3, method="Gibbs",control=list(alpha=1, delta=0.1, seed=10005))
+
+topicos_sptrans <- tidy(mod_sptrans, matrix = "beta")
+
+# Palavras Mais Comuns por Tópico
+topicos_top_terms_sptrans <- topicos_sptrans %>%
+  group_by(topic) %>%
+  top_n(20, beta) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+topicos_top_terms_sptrans %>%
+  mutate(term = reorder(term, beta)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip() + 
+  labs(
+    title = "Topic Modelling",
+    subtitle = "Principais Tópicos da SPTrans",
+    x = "Palavras",
+    y = "Beta"
+  )
+
+# Tópico 1 = Bilhete único
+# Tópico 2 = Linhas de ônibus
+# Tópico 3 - Abusos sexuais
+
+# Diferença entre Tópico 1 e 2
+beta_spread_sptrans <- topicos_sptrans %>%
+  mutate(topic = paste0("topic", topic)) %>%
+  spread(topic, beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread_sptrans %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(20, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(
+    title = "Topic Modelling",
+    subtitle = "Termos com a maior diferença entre os Betas - Tópicos 1 e 2",
+    x = "Palavras",
+    y = "Log2 ratio of beta in topic 2 / topic 1"
+  ) +
+  coord_flip()
+
+# Diferença entre Tópico 2 e 3
+beta_spread_sptrans <- topicos_sptrans %>%
+  mutate(topic = paste0("topic", topic)) %>%
+  spread(topic, beta) %>%
+  filter(topic2 > .001 | topic3 > .001) %>%
+  mutate(log_ratio = log2(topic3 / topic2))
+
+beta_spread_sptrans %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(20, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(
+    title = "Topic Modelling",
+    subtitle = "Termos com a maior diferença entre os Betas - Tópicos 2 e 3",
+    x = "Palavras",
+    y = "Log2 ratio of beta in topic 3 / topic 2"
+  ) +
+  coord_flip()
+
+# Diferença entre Tópico 1 e 3
+beta_spread_sptrans <- topicos_sptrans %>%
+  mutate(topic = paste0("topic", topic)) %>%
+  spread(topic, beta) %>%
+  filter(topic1 > .001 | topic3 > .001) %>%
+  mutate(log_ratio = log2(topic3 / topic1))
+
+beta_spread_sptrans %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(20, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(
+    title = "Topic Modelling",
+    subtitle = "Termos com a maior diferença entre os Betas - Tópicos 1 e 3",
+    x = "Palavras",
+    y = "Log2 ratio of beta in topic 3 / topic 1"
+  ) +
+  coord_flip()
