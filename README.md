@@ -94,6 +94,15 @@ A análise TF-IDF de trigramas reforça todas as análises feitas anteriores, ad
 
 ![](https://github.com/ricardobreis/Text-Mining-Acesso-Info-SP/blob/master/img/An%C3%A1lise%20TF-IDF%20de%20Trigramas%20-%20An%C3%A1lise%20TF-IDF%20-%20Educa%C3%A7%C3%A3o%2C%20Sa%C3%BAde%20e%20Transporte.png)
 
+## Topic Modelling
+
+A técnica de Topic Modelling é similar a uma Análise de Cluster, onde ele aplica o algoritmo LDA (Latent Dirichlet Allocation) para estimar em qual tópico uma palavra tem a maior chance de ser classificada, lembrando que a mesma palavra pode aparecer em vários tópicos. Neste estudo, optou-se por aplicar a técnica no órgão SPTrans pois foi o que demonstrou maior potencial de se obter resultados significativos, levando-se em consideração todas as análises anteriores. 
+
+Inicialmente filtrou-se apenas o órgão desejado para então aplicar o LDA para 2, 3, 4 e 5 tópicos e notou-se que, para 2 tópicos  havia uma sobreposição de assuntos, enquanto que para 4 e 5 os assunto começavam a se repetir ou não se podia identificar. Por conta disso chegou-se à conclusão que existem 3 temas principais nos pedidos de acesso à informação no órgão SPTrans:
+
+1. O tópico 1 estaria relacionado à bilhetes únicos devido a palavras como bilhete, bilhetes, único, sistema;
+2. O tópico 2 estaria relacionado à linhas de ônibus devido a palavras como ônibus, linha, linhas, empresa, terminal;
+3. O tópico 3 estaria relacionado à abusos sexuais devido a palavras como quantos, abusos, cometidos, casos, sexuais, número;
 
 
 
