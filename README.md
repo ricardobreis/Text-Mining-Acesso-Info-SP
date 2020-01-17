@@ -14,5 +14,4 @@ Os principais aspectos da LAI são:
 > -	Fornecimento gratuito de informação, salvo custo de reprodução (gratuidade da informação)
 > -	Divulgação proativa de informações de interesse coletivo  e geral (transparência ativa)
 > -	Criação de procedimentos e prazos que facilitam o acesso à informação (transparência passiva)
-
 > <sup>*Fonte: http://www.acessoainformacao.gov.br/assuntos/conheca-seu-direito/principais-aspectos*</sup>
