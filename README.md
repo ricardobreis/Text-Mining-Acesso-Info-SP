@@ -16,3 +16,15 @@ Os principais aspectos da LAI são:
 > -	Criação de procedimentos e prazos que facilitam o acesso à informação (transparência passiva)
 >
 > <sup>*Fonte: http://www.acessoainformacao.gov.br/assuntos/conheca-seu-direito/principais-aspectos*</sup>
+
+Para garantir a transparência passiva, foi criado o Sistema Eletrônico do Serviço de Informações ao Cidadão (e-SIC), que permite qualquer pessoa, física ou jurídica, fazer pedidos de acesso à informação e acompanhar o tramite.
+
+## Objetivo
+
+Este trabalho tem como objetivo realizar uma mineração de texto nos pedidos de acesso à informação realizados à prefeitura de São Paulo no ano de 2018 com o intuito de identificar as principais necessidades de informações da população no que diz respeito à educação, saúde e transportes visando fornecer insumo ao planejamento de melhora dos serviços públicos para os anos subsequentes e melhora da comunicação com o público.
+
+## Tratamento da Base e Análise Exploratória
+
+A base que estamos analisando possui 35.689 registros com 8 colunas. Essa base foi obtida no portal de dados abertos da prefeitura de São Paulo no link abaixo:
+
+*http://dados.prefeitura.sp.gov.br/pt_PT/dataset/pedidos-de-informacao-protocolados-a-prefeitura-via-e-sic1*
