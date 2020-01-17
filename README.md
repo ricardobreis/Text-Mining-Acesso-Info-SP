@@ -28,3 +28,17 @@ Este trabalho tem como objetivo realizar uma mineração de texto nos pedidos de
 A base que estamos analisando possui 35.689 registros com 8 colunas. Essa base foi obtida no portal de dados abertos da prefeitura de São Paulo no link abaixo:
 
 *http://dados.prefeitura.sp.gov.br/pt_PT/dataset/pedidos-de-informacao-protocolados-a-prefeitura-via-e-sic1*
+
+As colunas estão descritas na tabela abaixo:
+
+Coluna             |  Definição
+:-------------------------:|:-------------------------:
+cd_atendimento_pedido | Código único para cada movimentação do pedido (a partir de 2018)
+status_nome | Nome do status do pedido (Ex: Atendido, finalizado, 2ª instância, etc.)
+cd_orgao | Código de identificação do órgão responsável pelo pedido
+orgao_nome | Nome do órgão responsável pelo pedido
+cd_pedido | Código do pedido (protocolo único de cada pedido)
+dc_pedido | Conteúdo do Pedido
+dt_resposta_atendimento | Data do pedido ou movimentação
+dc_resposta | Resposta do pedido
+
