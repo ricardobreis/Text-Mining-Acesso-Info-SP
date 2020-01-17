@@ -1,7 +1,5 @@
 # Text Mining - Pedidos de Acesso à Informação à Prefeitura de São Paulo em 2018
 
-http://dados.prefeitura.sp.gov.br/pt_PT/dataset/pedidos-de-informacao-protocolados-a-prefeitura-via-e-sic1
-
 ## Introdução
 
 Em 18 de novembro de 2011, foi sancionada a Lei nº 12.527 que regulamenta o direito constitucional de acesso à informações públicas aos cidadãos, com o objetivo de fortalecer a democracia brasileira e as políticas de transparência pública. A chamada Lei de Acesso à Informação (LAI), em linhas gerais diz que, com exceção de informações pessoais e sigilosas legalmente estabelecidas, toda informação produzida pelo estado é pública.
