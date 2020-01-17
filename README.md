@@ -8,11 +8,11 @@ Em 18 de novembro de 2011, foi sancionada a Lei nº 12.527 que regulamenta o dir
 
 Os principais aspectos da LAI são:
 
--	Acesso é a regra, o sigilo, a exceção (divulgação máxima)
--	Requerente não precisa dizer por que e para que deseja a informação (não exigência de motivação)
--	Hipóteses de sigilo são limitadas e legalmente estabelecidas (limitação de exceções)
--	Fornecimento gratuito de informação, salvo custo de reprodução (gratuidade da informação)
--	Divulgação proativa de informações de interesse coletivo  e geral (transparência ativa)
--	Criação de procedimentos e prazos que facilitam o acesso à informação (transparência passiva)
+> -	Acesso é a regra, o sigilo, a exceção (divulgação máxima)
+> -	Requerente não precisa dizer por que e para que deseja a informação (não exigência de motivação)
+> -	Hipóteses de sigilo são limitadas e legalmente estabelecidas (limitação de exceções)
+> -	Fornecimento gratuito de informação, salvo custo de reprodução (gratuidade da informação)
+> -	Divulgação proativa de informações de interesse coletivo  e geral (transparência ativa)
+> -	Criação de procedimentos e prazos que facilitam o acesso à informação (transparência passiva)
 
-<sub><sup>*Fonte: http://www.acessoainformacao.gov.br/assuntos/conheca-seu-direito/principais-aspectos*</sup></sub>
+> <sup>*Fonte: http://www.acessoainformacao.gov.br/assuntos/conheca-seu-direito/principais-aspectos*</sup>
