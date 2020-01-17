@@ -42,3 +42,8 @@ dc_pedido | Conteúdo do Pedido
 dt_resposta_atendimento | Data do pedido ou movimentação
 dc_resposta | Resposta do pedido
 
+Após a leitura da base, tratamos a coluna dc_pedido, transformando-as para caracteres, em seguida dt_resposta_atendimento é reformatada, trocando-se “/” por “-“ para que se possa separa-la em 4 colunas: data, ano, mês e dia. Em seguida, a partir da coluna orgao_nome,  cria-se uma nova coluna apenas com a sigla do órgão para facilitar as visualizações.
+
+A partir deste ponto inicia-se a análise exploratória com uma contagem de pedidos únicos por órgão com status de início (Em Tramitação) e fim (Finalizado). Pode-se observar na figura 1 abaixo os órgãos que mais recebem pedidos de acesso à informação, sendo áreas como educação, saúde e transportes as principais. Por conta disso e pelo fato de existirem mais de 100 órgãos no dataframe, optou-se por analisar os órgãos SME, SMS e SPTrans.
+
+![](https://github.com/ricardobreis/Text-Mining-Acesso-Info-SP/blob/master/img/An%C3%A1lise%20Explorat%C3%B3ria%20-%20TOP%2010%20-%20Pedidos%20por%20%C3%93rg%C3%A3o%20Iniciados%20e%20Finalizados.png)
