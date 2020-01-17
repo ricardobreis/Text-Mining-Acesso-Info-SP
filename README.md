@@ -104,6 +104,21 @@ Inicialmente filtrou-se apenas o órgão desejado para então aplicar o LDA para
 2. O tópico 2 estaria relacionado à linhas de ônibus devido a palavras como ônibus, linha, linhas, empresa, terminal;
 3. O tópico 3 estaria relacionado à abusos sexuais devido a palavras como quantos, abusos, cometidos, casos, sexuais, número;
 
+![](https://github.com/ricardobreis/Text-Mining-Acesso-Info-SP/blob/master/img/Topic%20Modelling%20-%20Principais%20T%C3%B3picos%20da%20SPTrans.png)
 
+Nas figuras 14, 15 e 16 pode-se observar os termos com maior diferença entre os betas de cada tópico.
 
+![](https://github.com/ricardobreis/Text-Mining-Acesso-Info-SP/blob/master/img/Topic%20Modelling%20-%20Termos%20com%20a%20maior%20diferen%C3%A7a%20entre%20os%20Betas%20-%20T%C3%B3picos%201%20e%202.png)
+
+![](https://github.com/ricardobreis/Text-Mining-Acesso-Info-SP/blob/master/img/Topic%20Modelling%20-%20Termos%20com%20a%20maior%20diferen%C3%A7a%20entre%20os%20Betas%20-%20T%C3%B3picos%201%20e%203.png)
+
+![](https://github.com/ricardobreis/Text-Mining-Acesso-Info-SP/blob/master/img/Topic%20Modelling%20-%20Termos%20com%20a%20maior%20diferen%C3%A7a%20entre%20os%20Betas%20-%20T%C3%B3picos%202%20e%203.png)
+
+## Conclusão
+
+Este trabalho discutiu e implementou técnicas de text mining aplicada à geração de insights na transparência passiva 	visando a melhora dos serviços públicos e da comunicação com a população. A partir destes resultados, a prefeitura de São Paulo pode pensar em estratégias para melhorar o site do bilhete único, elaborar novas campanhas contra o abuso sexual, passar para a transparência ativa o acesso a contratos caso ainda não esteja, por exemplo.
+
+A análise apresentada mostrou que para a SME nota-se interesse em educação infantil e fundamental, servidores comissionados e como proceder ou recorrer sobre algo. Já na saúde, encontrou-se menções à NTCSSS (Núcleo Técnico de Contratação de Serviço de Saúde), contratos e dados abertos. Na SPTrans aplicou-se a técnica de topic modelling e se encontrou 3 temas principais: abusos sexuais, bilhetes únicos e linhas de ônibus.
+
+Como trabalhos futuros, pretende-se investigar os principais temas nos pedidos dos demais órgãos, além de aprofundar a análise nos órgãos estudados no trabalho.
 
